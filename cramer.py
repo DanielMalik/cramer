@@ -36,6 +36,7 @@ class Cramer:
         matrix_dimension_set = {len(self.data)}
         if matrix_dimension_set == {len(d) for d in self.data.values()}:
             self.matrix_dimension, = matrix_dimension_set
+            self.unknowns = {key for key in self.data.get(0).keys()}
             return True
         else:
             raise Exception(f'{self.data} is not a n dimensional square matrix')
@@ -53,6 +54,32 @@ class Cramer:
         except:
             print('something went wrong')
 
+    def solve(self):
+        if self.check_if_cramers_rule_assumptions_are_met():
+
+            for key in self.unknowns:
+                self.results.append(self._solve_key(key))
+
+            # ipdb.set_trace()
+            return True
+
+    def _solve_key(self, key):
+        matrix = {}
+        print(self.data)
+        for k, v in self.data.items():
+            row = v
+            print(k)
+            print('org', row)
+            print('pop', row.pop(key))
+            print(self.sums)
+            row[key] = self.sums[k]
+            print(row)
+            matrix[k] = row
+            print(matrix)
+        print('end', matrix)
+        r = self.find_determinant(matrix, self.matrix_dimension)
+        return r
+
     @staticmethod
     def find_determinant(matrix_as_dict, matrix_dimension):
         matrix = []
@@ -67,8 +94,8 @@ class Cramer:
 
 
 if __name__ == '__main__':
-    # process = Cramer('test_1.csv')
-    process = Cramer('test_2.csv')
+    process = Cramer('test_1.csv')
+    # process = Cramer('test_2.csv')
     # process = Cramer('wrong.csv')
     # process = Cramer.from_input()
     print(process.file_name)
@@ -77,8 +104,9 @@ if __name__ == '__main__':
     print(process.sums)
     print(process.matrix_dimension)
     print(process.matrix_determinant)
-    process.check_if_cramers_rule_assumptions_are_met()
-
+    # process.check_if_cramers_rule_assumptions_are_met()
+    process.solve()
+    ipdb.set_trace()
 
 
 

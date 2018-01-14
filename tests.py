@@ -2,7 +2,6 @@ import pytest
 import cramer
 
 
-@pytest.mark.cramertest
 class TestCramer:
 
     def test_open_file_and_create_data(self):
@@ -27,9 +26,11 @@ class TestCramer:
         process = cramer.Cramer('test_1.csv')
         assert process._check_if_matrix_is_square() is True
         assert process.matrix_dimension == 3
+        assert process.unknowns == {'x', 'y', 'z'}
         process = cramer.Cramer('test_2.csv')
         assert process._check_if_matrix_is_square() is True
         assert process.matrix_dimension == 4
+        assert process.unknowns == {'w', 'x', 'y', 'z'}
 
     def test_check_non_square_matrix(self):
         process = cramer.Cramer('wrong.csv')
@@ -40,6 +41,9 @@ class TestCramer:
         process = cramer.Cramer('test_2.csv')
         process.check_if_cramers_rule_assumptions_are_met()
         assert process.matrix_determinant == -2
+        process = cramer.Cramer('test_1.csv')
+        process.check_if_cramers_rule_assumptions_are_met()
+        assert process.matrix_determinant == 9
 
     def test_determinant_is_not_zero(self):  # rebuild test to check if determinant IS zero
         process = cramer.Cramer('test_2.csv')
@@ -50,3 +54,8 @@ class TestCramer:
     def test_if_cramers_rule_can_be_applied(self):  # expand test cases with data that do not meet Cramer's assumptions
         process = cramer.Cramer('test_2.csv')
         assert process.check_if_cramers_rule_assumptions_are_met() is True
+
+    def test_finding_determinants_for_parameters(self):
+        process = cramer.Cramer('test_1.csv')
+        process.solve()
+        assert process.matrix_determinant == 9
